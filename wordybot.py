@@ -3,6 +3,7 @@ import json
 import time
 from telebot import types
 import config as co
+import random
 
 
 GUESSED_TEXT = "✅"
@@ -56,7 +57,8 @@ def get_random_word():
     if current_dict in data:
         word_list = data[current_dict]
         if word_list:
-            return word_list.pop()
+            random_word = random.choice(word_list)
+            return random_word
     return "🙈 No words available in the current dictionary."
 
 def send_word(chat_id):
