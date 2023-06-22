@@ -67,6 +67,8 @@ def send_word(chat_id):
     keyboard.add(types.KeyboardButton(GUESSED_TEXT), types.KeyboardButton(FAILED_TEXT))
     keyboard.add(types.KeyboardButton(REFRESH_TEXT))
     keyboard.add(types.KeyboardButton(CHANGE_DICTIONARY_TEXT))
+
+    print(chat_id, word)
     bot.send_message(chat_id, word, reply_markup=keyboard)
 
 @bot.message_handler(func=lambda message: True)
