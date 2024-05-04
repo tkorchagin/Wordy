@@ -30,8 +30,9 @@ with open('data.json') as file:
 current_dict_per_chat = {}
 
 async def start(update: Update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=START_TEXT, parse_mode='HTML')
-    await send_word(update.effective_chat.id, context.bot)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=START_TEXT, parse_mode='HTML')
+    word = await get_random_word(update.effective_chat.id)
+    await send_word(update.effective_chat.id, context.bot, word)
 
 async def change_dictionary(update: Update, context):
     keyboard = [[InlineKeyboardButton(dictionary_name, callback_data=dictionary_name)] for dictionary_name in data.keys()]
@@ -41,8 +42,9 @@ async def change_dictionary(update: Update, context):
 async def handle_callback_query(update: Update, context):
     query = update.callback_query
     current_dict_per_chat[query.message.chat_id] = query.data
-    await query.edit_message_text(text=f"👌 Вы выбрали словарик <b>{query.data}</b>", parse_mode="HTML")
-    await send_word(query.message.chat_id, context.bot)
+    await query.edit_message_text(text=f"👌 Вы выбрали словарик: <b>{query.data}</b>", parse_mode="HTML")
+    word = await get_random_word(query.message.chat_id)
+    await send_word(query.message.chat_id, context.bot, word)
 
 async def get_random_word(chat_id):
     current_dict = current_dict_per_chat.get(chat_id)
@@ -82,9 +84,9 @@ def main():
         .build()
     )
 
-    application.add_handler(MessageHandler(None, handle_message))
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(handle_callback_query))
+    application.add_handler(MessageHandler(None, handle_message))
 
     application.run_polling()
 
